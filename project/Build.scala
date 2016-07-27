@@ -87,7 +87,7 @@ object Configuration {
     javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
     organization := "com.github.mauricio",
     version := commonVersion,
-    parallelExecution := false,
+    parallelExecution in Test := false,
     publishArtifact in Test := false,
     publishMavenStyle := true,
     pomIncludeRepository := {
