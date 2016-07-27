@@ -51,7 +51,7 @@ object Configuration {
 
   val commonVersion = "0.2.21-SNAPSHOT"
   val projectScalaVersion = "2.11.7"
-  val specs2Version = "2.5"
+  val specs2Version = "3.8.4"
 
   val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
   val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % "test"
@@ -83,7 +83,7 @@ object Configuration {
         :+ "-feature"
     ,
     scalacOptions in doc := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
-    crossScalaVersions := Seq(projectScalaVersion, "2.10.6"),
+    crossScalaVersions := Seq(projectScalaVersion, "2.10.6", "2.12.0-RC1"),
     javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
     organization := "com.github.mauricio",
     version := commonVersion,
