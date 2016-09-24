@@ -34,7 +34,7 @@ object ProjectBuild extends Build {
       name := postgresqlName,
       libraryDependencies ++= Configuration.implementationDependencies
     )
-  ) dependsOn (common)
+  ) dependsOn (common % "compile->compile;test->test")
 
   lazy val mysql = Project(
     id = mysqlName,
@@ -43,7 +43,7 @@ object ProjectBuild extends Build {
       name := mysqlName,
       libraryDependencies ++= Configuration.implementationDependencies
     )
-  ) dependsOn (common)
+  ) dependsOn (common % "compile->compile;test->test")
 
 }
 
@@ -51,7 +51,7 @@ object Configuration {
 
   val commonVersion = "0.2.21-SNAPSHOT"
   val projectScalaVersion = "2.11.7"
-  val specs2Version = "3.8.4"
+  val specs2Version = "3.8.5"
 
   val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
   val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % "test"

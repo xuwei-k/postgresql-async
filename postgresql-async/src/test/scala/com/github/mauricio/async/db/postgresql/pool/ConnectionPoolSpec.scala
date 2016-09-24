@@ -22,7 +22,7 @@ import com.github.mauricio.async.db.pool.{ConnectionPool, PoolConfiguration}
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException
 import com.github.mauricio.async.db.postgresql.{PostgreSQLConnection, DatabaseTestHelper}
 import org.specs2.mutable.Specification
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.github.mauricio.async.db.util.TestExecutionContext._
 
 object ConnectionPoolSpec {
   val Insert = "insert into transaction_test (id) values (?)"

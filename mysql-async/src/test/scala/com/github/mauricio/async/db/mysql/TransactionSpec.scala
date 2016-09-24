@@ -5,12 +5,12 @@ import java.util.concurrent.TimeUnit
 
 import org.specs2.mutable.Specification
 import com.github.mauricio.async.db.util.FutureUtils.awaitFuture
+import com.github.mauricio.async.db.util.TestExecutionContext._
 import com.github.mauricio.async.db.mysql.exceptions.MySQLException
 import com.github.mauricio.async.db.Connection
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 
 object TransactionSpec {

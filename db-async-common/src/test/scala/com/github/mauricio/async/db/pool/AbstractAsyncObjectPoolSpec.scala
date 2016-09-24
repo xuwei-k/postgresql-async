@@ -1,5 +1,6 @@
 package com.github.mauricio.async.db.pool
 
+import com.github.mauricio.async.db.util.TestExecutionContext._
 import com.github.mauricio.async.db.pool.AbstractAsyncObjectPoolSpec.Widget
 import org.mockito.Mockito.reset
 import org.specs2.mock.Mockito
@@ -10,7 +11,6 @@ import scala.util.Failure
 
 import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 /**

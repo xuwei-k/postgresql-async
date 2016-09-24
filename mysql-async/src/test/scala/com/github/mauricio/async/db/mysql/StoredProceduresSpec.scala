@@ -17,9 +17,9 @@
 package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.ResultSet
+import com.github.mauricio.async.db.util.TestExecutionContext._
 import com.github.mauricio.async.db.util.FutureUtils._
 import org.specs2.mutable.Specification
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class StoredProceduresSpec extends Specification with ConnectionHelper {
 
