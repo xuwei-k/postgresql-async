@@ -140,13 +140,13 @@ class PostgreSQLConnection
     promise.future
   }
 
-  override def onError( exception : Throwable ) {
+  override def onError( exception : Throwable ): Unit = {
     this.setErrorOnFutures(exception)
   }
 
   def hasRecentError: Boolean = this.recentError
 
-  private def setErrorOnFutures(e: Throwable) {
+  private def setErrorOnFutures(e: Throwable): Unit = {
     this.recentError = true
 
     log.error("Error on connection", e)
@@ -161,14 +161,14 @@ class PostgreSQLConnection
     this.failQueryPromise(e)
   }
 
-  override def onReadyForQuery() {
+  override def onReadyForQuery(): Unit = {
     this.connectionFuture.trySuccess(this)
     
     this.recentError = false
     queryResult.foreach(this.succeedQueryPromise)
   }
 
-  override def onError(m: ErrorMessage) {
+  override def onError(m: ErrorMessage): Unit = {
     log.error("Error with message -> {}", m)
 
     val error = new GenericDatabaseException(m)
@@ -177,19 +177,19 @@ class PostgreSQLConnection
     this.setErrorOnFutures(error)
   }
 
-  override def onCommandComplete(m: CommandCompleteMessage) {
+  override def onCommandComplete(m: CommandCompleteMessage): Unit = {
     this.currentPreparedStatement = None
     queryResult = Some(new QueryResult(m.rowsAffected, m.statusMessage, this.currentQuery))
   }
 
-  override def onParameterStatus(m: ParameterStatusMessage) {
+  override def onParameterStatus(m: ParameterStatusMessage): Unit = {
     this.parameterStatus.put(m.key, m.value)
     if ( ServerVersionKey == m.key ) {
       this.version = Version(m.value)
     }
   }
 
-  override def onDataRow(m: DataRowMessage) {
+  override def onDataRow(m: DataRowMessage): Unit = {
     val items = new Array[Any](m.values.size)
     var x = 0
 
@@ -211,18 +211,18 @@ class PostgreSQLConnection
     this.currentQuery.get.addRow(items)
   }
 
-  override def onRowDescription(m: RowDescriptionMessage) {
+  override def onRowDescription(m: RowDescriptionMessage): Unit = {
     this.currentQuery = Option(new MutableResultSet(m.columnDatas))
     this.setColumnDatas(m.columnDatas)
   }
 
-  private def setColumnDatas( columnDatas : Array[PostgreSQLColumnData] ) {
+  private def setColumnDatas( columnDatas : Array[PostgreSQLColumnData] ): Unit = {
     this.currentPreparedStatement.foreach { holder =>
       holder.columnDatas = columnDatas
     }
   }
 
-  override def onAuthenticationResponse(message: AuthenticationMessage) {
+  override def onAuthenticationResponse(message: AuthenticationMessage): Unit = {
 
     message match {
       case m: AuthenticationOkMessage => {
@@ -239,22 +239,22 @@ class PostgreSQLConnection
 
   }
 
-  override def onNotificationResponse( message : NotificationResponse ) {
+  override def onNotificationResponse( message : NotificationResponse ): Unit = {
     val iterator = this.notifyListeners.iterator()
     while ( iterator.hasNext ) {
       iterator.next().apply(message)
     }
   }
 
-  def registerNotifyListener( listener : NotificationResponse => Unit ) {
+  def registerNotifyListener( listener : NotificationResponse => Unit ): Unit = {
     this.notifyListeners.add(listener)
   }
 
-  def unregisterNotifyListener( listener : NotificationResponse => Unit ) {
+  def unregisterNotifyListener( listener : NotificationResponse => Unit ): Unit = {
     this.notifyListeners.remove(listener)
   }
 
-  def clearNotifyListeners() {
+  def clearNotifyListeners(): Unit = {
     this.notifyListeners.clear()
   }
 
@@ -286,7 +286,7 @@ class PostgreSQLConnection
     if (this.queryPromise.isDefined)
       notReadyForQueryError(errorMessage, false)
   
-  private def validateQuery(query: String) {
+  private def validateQuery(query: String): Unit = {
     this.validateIfItIsReadyForQuery("Can't run query because there is one query pending already")
 
     if (query == null || query.isEmpty) {
@@ -296,7 +296,7 @@ class PostgreSQLConnection
 
   private def queryPromise: Option[Promise[QueryResult]] = queryPromiseReference.get()
 
-  private def setQueryPromise(promise: Promise[QueryResult]) {
+  private def setQueryPromise(promise: Promise[QueryResult]): Unit = {
     if (!this.queryPromiseReference.compareAndSet(None, Some(promise)))
       notReadyForQueryError("Can't run query due to a race with another started query", true)
   }
@@ -305,14 +305,14 @@ class PostgreSQLConnection
     this.queryPromiseReference.getAndSet(None)
   }
 
-  private def failQueryPromise(t: Throwable) {
+  private def failQueryPromise(t: Throwable): Unit = {
     this.clearQueryPromise.foreach { promise =>
       log.error("Setting error on future {}", promise)
       promise.failure(t)
     }
   }
 
-  private def succeedQueryPromise(result: QueryResult) {
+  private def succeedQueryPromise(result: QueryResult): Unit = {
     this.queryResult = None
     this.currentQuery = None
     this.clearQueryPromise.foreach {
@@ -320,7 +320,7 @@ class PostgreSQLConnection
     }
   }
 
-  private def write( message : ClientMessage ) {
+  private def write( message : ClientMessage ): Unit = {
     this.connectionHandler.write(message)
   }
 

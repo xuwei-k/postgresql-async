@@ -57,7 +57,7 @@ class SingleThreadedAsyncObjectPool[T](
   private val waitQueue = new Queue[Promise[T]]()
   private val timer = new Timer("async-object-pool-timer-" + Counter.incrementAndGet(), true)
   timer.scheduleAtFixedRate(new TimerTask {
-    def run() {
+    def run(): Unit = {
       mainPool.action {
         testObjects
       }
@@ -170,7 +170,7 @@ class SingleThreadedAsyncObjectPool[T](
    * @param promise
    */
 
-  private def addBack(item: T, promise: Promise[AsyncObjectPool[T]]) {
+  private def addBack(item: T, promise: Promise[AsyncObjectPool[T]]): Unit = {
     this.poolables ::= new PoolableHolder[T](item)
 
     if (this.waitQueue.nonEmpty) {
@@ -188,7 +188,7 @@ class SingleThreadedAsyncObjectPool[T](
    * @param promise
    */
 
-  private def enqueuePromise(promise: Promise[T]) {
+  private def enqueuePromise(promise: Promise[T]): Unit = {
     if (this.waitQueue.size >= configuration.maxQueueSize) {
       val exception = new PoolExhaustedException("There are no objects available and the waitQueue is full")
       exception.fillInStackTrace()
@@ -198,7 +198,7 @@ class SingleThreadedAsyncObjectPool[T](
     }
   }
 
-  private def checkout(promise: Promise[T]) {
+  private def checkout(promise: Promise[T]): Unit = {
     this.mainPool.action {
       if (this.isFull) {
         this.enqueuePromise(promise)
@@ -216,7 +216,7 @@ class SingleThreadedAsyncObjectPool[T](
    * @param promise
    */
 
-  private def createOrReturnItem(promise: Promise[T]) {
+  private def createOrReturnItem(promise: Promise[T]): Unit = {
     if (this.poolables.isEmpty) {
       try {
         val item = this.factory.create
@@ -234,7 +234,7 @@ class SingleThreadedAsyncObjectPool[T](
     }
   }
 
-  override def finalize() {
+  override def finalize(): Unit = {
     this.close
   }
 
@@ -246,7 +246,7 @@ class SingleThreadedAsyncObjectPool[T](
    *
    */
 
-  private def testObjects {
+  private def testObjects: Unit = {
     val removals = new ArrayBuffer[PoolableHolder[T]]()
     this.poolables.foreach {
       poolable =>

@@ -28,7 +28,7 @@ object StringEncoder {
 
 class StringEncoder( charset : Charset ) extends BinaryEncoder {
 
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     buffer.writeLenghtEncodedString(value.toString, charset)
   }
 

@@ -24,7 +24,7 @@ object DurationEncoder extends BinaryEncoder {
 
   private final val Zero = 0.seconds
 
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val duration = value.asInstanceOf[Duration]
 
     val days = duration.toDays

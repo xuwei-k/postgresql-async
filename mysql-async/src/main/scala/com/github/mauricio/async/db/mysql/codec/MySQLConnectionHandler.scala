@@ -91,7 +91,7 @@ class MySQLConnectionHandler(
     this.connectionPromise.future
   }
 
-  override def channelRead0(ctx: ChannelHandlerContext, message: Object) {
+  override def channelRead0(ctx: ChannelHandlerContext, message: Object): Unit = {
     message match {
       case m: ServerMessage => {
         (m.kind: @switch) match {
@@ -162,11 +162,11 @@ class MySQLConnectionHandler(
   }
 
 
-  override def channelInactive(ctx: ChannelHandlerContext) {
+  override def channelInactive(ctx: ChannelHandlerContext): Unit = {
     log.debug("Channel became inactive")
   }
 
-  override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+  override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable): Unit = {
     // unwrap CodecException if needed
     cause match {
       case t: CodecException => handleException(t.getCause)
@@ -175,14 +175,14 @@ class MySQLConnectionHandler(
 
   }
 
-  private def handleException(cause: Throwable) {
+  private def handleException(cause: Throwable): Unit = {
     if (!this.connectionPromise.isCompleted) {
       this.connectionPromise.failure(cause)
     }
     handlerDelegate.exceptionCaught(cause)
   }
 
-  override def handlerAdded(ctx: ChannelHandlerContext) {
+  override def handlerAdded(ctx: ChannelHandlerContext): Unit = {
     this.currentContext = ctx
   }
 
@@ -223,7 +223,7 @@ class MySQLConnectionHandler(
 
   def disconnect: ChannelFuture = this.currentContext.close()
 
-  def clearQueryState {
+  def clearQueryState: Unit = {
     this.currentColumns.clear()
     this.currentParameters.clear()
     this.currentQuery = null
@@ -293,11 +293,11 @@ class MySQLConnectionHandler(
     writeAndHandleError(new SendLongDataMessage(statementId, buffer, paramId))
   }
 
-  private def onPreparedStatementPrepareResponse( message : PreparedStatementPrepareResponse ) {
+  private def onPreparedStatementPrepareResponse( message : PreparedStatementPrepareResponse ): Unit = {
     this.currentPreparedStatementHolder = new PreparedStatementHolder( this.currentPreparedStatement.statement, message)
   }
 
-  def onColumnDefinitionFinished() {
+  def onColumnDefinitionFinished(): Unit = {
 
     val columns = if ( this.currentPreparedStatementHolder != null ) {
       this.currentPreparedStatementHolder.columns
@@ -336,7 +336,7 @@ class MySQLConnectionHandler(
     }
   }
 
-  private def handleEOF( m : ServerMessage ) {
+  private def handleEOF( m : ServerMessage ): Unit = {
     m match {
       case eof : EOFMessage => {
         val resultSet = this.currentQuery

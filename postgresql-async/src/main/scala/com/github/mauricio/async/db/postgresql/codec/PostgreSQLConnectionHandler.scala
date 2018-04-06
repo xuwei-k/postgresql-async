@@ -168,7 +168,7 @@ class PostgreSQLConnectionHandler
           val handler = new SslHandler(sslEngine)
           ctx.pipeline().addFirst(handler)
           handler.handshakeFuture.addListener(new FutureListener[channel.Channel]() {
-            def operationComplete(future: io.netty.util.concurrent.Future[channel.Channel]) {
+            def operationComplete(future: io.netty.util.concurrent.Future[channel.Channel]): Unit = {
               if (future.isSuccess()) {
                 ctx.writeAndFlush(new StartupMessage(properties))
               } else {
@@ -248,7 +248,7 @@ class PostgreSQLConnectionHandler
 
   }
 
-  override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+  override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable): Unit = {
     // unwrap CodecException if needed
     cause match {
       case t: CodecException => connectionDelegate.onError(t.getCause)
@@ -260,11 +260,11 @@ class PostgreSQLConnectionHandler
     log.info("Connection disconnected - {}", ctx.channel.remoteAddress)
   }
 
-  override def handlerAdded(ctx: ChannelHandlerContext) {
+  override def handlerAdded(ctx: ChannelHandlerContext): Unit = {
     this.currentContext = ctx
   }
 
-  def write( message : ClientMessage ) {
+  def write( message : ClientMessage ): Unit = {
     this.currentContext.writeAndFlush(message).onFailure {
       case e : Throwable => connectionDelegate.onError(e)
     }

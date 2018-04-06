@@ -110,30 +110,30 @@ class MySQLConnection(
     this.disconnectionPromise.future
   }
 
-  override def connected(ctx: ChannelHandlerContext) {
+  override def connected(ctx: ChannelHandlerContext): Unit = {
     log.debug("Connected to {}", ctx.channel.remoteAddress)
     this.connected = true
   }
 
-  override def exceptionCaught(throwable: Throwable) {
+  override def exceptionCaught(throwable: Throwable): Unit = {
     log.error("Transport failure ", throwable)
     setException(throwable)
   }
 
-  override def onError(message: ErrorMessage) {
+  override def onError(message: ErrorMessage): Unit = {
     log.error("Received an error message -> {}", message)
     val exception = new MySQLException(message)
     exception.fillInStackTrace()
     this.setException(exception)
   }
 
-  private def setException( t : Throwable ) {
+  private def setException( t : Throwable ): Unit = {
     this._lastException = t
     this.connectionPromise.tryFailure(t)
     this.failQueryPromise(t)
   }
 
-  override def onOk(message: OkMessage) {
+  override def onOk(message: OkMessage): Unit = {
     if ( !this.connectionPromise.isCompleted ) {
       log.debug("Connected to database")
       this.connectionPromise.success(this)
@@ -154,7 +154,7 @@ class MySQLConnection(
     }
   }
 
-  def onEOF(message: EOFMessage) {
+  def onEOF(message: EOFMessage): Unit = {
     if (this.isQuerying) {
       this.succeedQueryPromise(
         new MySQLQueryResult(
@@ -168,7 +168,7 @@ class MySQLConnection(
     }
   }
 
-  override def onHandshake(message: HandshakeMessage) {
+  override def onHandshake(message: HandshakeMessage): Unit = {
     this.serverVersion = Version(message.serverVersion)
 
     this.connectionHandler.write(new HandshakeResponseMessage(
@@ -181,7 +181,7 @@ class MySQLConnection(
     ))
   }
 
-  override def switchAuthentication( message : AuthenticationSwitchRequest ) {
+  override def switchAuthentication( message : AuthenticationSwitchRequest ): Unit = {
     this.connectionHandler.write(new AuthenticationSwitchResponse( configuration.password, message ))
   }
 
@@ -194,13 +194,13 @@ class MySQLConnection(
     promise.future
   }
 
-  private def failQueryPromise(t: Throwable) {
+  private def failQueryPromise(t: Throwable): Unit = {
     this.clearQueryPromise.foreach {
       _.tryFailure(t)
     }
   }
 
-  private def succeedQueryPromise(queryResult: QueryResult) {
+  private def succeedQueryPromise(queryResult: QueryResult): Unit = {
 
     this.clearQueryPromise.foreach {
       _.success(queryResult)
@@ -210,7 +210,7 @@ class MySQLConnection(
 
   def isQuerying: Boolean = this.queryPromise.isDefined
 
-  def onResultSet(resultSet: ResultSet, message: EOFMessage) {
+  def onResultSet(resultSet: ResultSet, message: EOFMessage): Unit = {
     if (this.isQuerying) {
       this.succeedQueryPromise(
         new MySQLQueryResult(
@@ -248,7 +248,7 @@ class MySQLConnection(
     "%s(%s,%d)".format(this.getClass.getName, this.connectionId, this.connectionCount)
   }
 
-  private def validateIsReadyForQuery() {
+  private def validateIsReadyForQuery(): Unit = {
     if ( isQuerying ) {
       throw new ConnectionStillRunningQueryException(this.connectionCount, false)
     }
@@ -256,7 +256,7 @@ class MySQLConnection(
 
   private def queryPromise: Option[Promise[QueryResult]] = queryPromiseReference.get()
 
-  private def setQueryPromise(promise: Promise[QueryResult]) {
+  private def setQueryPromise(promise: Promise[QueryResult]): Unit = {
     if (!this.queryPromiseReference.compareAndSet(None, Some(promise)))
       throw new ConnectionStillRunningQueryException(this.connectionCount, true)
   }

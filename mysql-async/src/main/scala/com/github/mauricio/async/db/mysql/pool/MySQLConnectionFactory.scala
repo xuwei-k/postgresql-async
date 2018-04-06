@@ -62,7 +62,7 @@ class MySQLConnectionFactory( configuration : Configuration ) extends ObjectFact
    *
    * @param item
    */
-  def destroy(item: MySQLConnection) {
+  def destroy(item: MySQLConnection): Unit = {
     try {
       item.disconnect
     } catch {

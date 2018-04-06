@@ -105,7 +105,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     }
   }
 
-  private def handleCommonFlow(messageType: Byte, slice: ByteBuf, out: java.util.List[Object]) {
+  private def handleCommonFlow(messageType: Byte, slice: ByteBuf, out: java.util.List[Object]): Unit = {
     val decoder = messageType match {
       case ServerMessage.Error => {
         this.clear
@@ -157,7 +157,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     doDecoding(decoder, slice, out)
   }
 
-  private def doDecoding(decoder: MessageDecoder, slice: ByteBuf, out: java.util.List[Object]) {
+  private def doDecoding(decoder: MessageDecoder, slice: ByteBuf, out: java.util.List[Object]): Unit = {
     if (decoder == null) {
       slice.readerIndex(slice.readerIndex() - 1)
       val result = decodeQueryResult(slice)
@@ -236,7 +236,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
 
   }
 
-  def preparedStatementPrepareStarted() {
+  def preparedStatementPrepareStarted(): Unit = {
     this.queryProcessStarted()
     this.hasReadColumnsCount = true
     this.processingParams = true
@@ -244,7 +244,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     this.isPreparedStatementPrepare = true
   }
 
-  def preparedStatementExecuteStarted(columnsCount: Int, paramsCount: Int) {
+  def preparedStatementExecuteStarted(columnsCount: Int, paramsCount: Int): Unit = {
     this.queryProcessStarted()
     this.hasReadColumnsCount = false
     this.totalColumns = columnsCount
@@ -253,13 +253,13 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     this.processingParams = false
   }
 
-  def queryProcessStarted() {
+  def queryProcessStarted(): Unit = {
     this.isInQuery = true
     this.processingColumns = true
     this.hasReadColumnsCount = false
   }
 
-  private def clear {
+  private def clear: Unit = {
     this.isPreparedStatementPrepare = false
     this.isPreparedStatementExecute = false
     this.isPreparedStatementExecuteRows = false

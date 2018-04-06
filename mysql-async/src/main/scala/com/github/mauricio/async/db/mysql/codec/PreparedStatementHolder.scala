@@ -32,7 +32,7 @@ class PreparedStatementHolder( val statement : String, val message : PreparedSta
 
   def needsAny : Boolean = this.needsParameters || this.needsColumns
 
-  def add( column : ColumnDefinitionMessage ) {
+  def add( column : ColumnDefinitionMessage ): Unit = {
     if ( this.needsParameters ) {
       this.parameters += column
     } else {

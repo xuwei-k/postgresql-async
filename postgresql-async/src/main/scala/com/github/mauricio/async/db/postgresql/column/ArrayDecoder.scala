@@ -36,12 +36,12 @@ class ArrayDecoder(private val decoder: ColumnDecoder) extends ColumnDecoder {
     var current: ArrayBuffer[Any] = null
     var result: IndexedSeq[Any] = null
     val delegate = new ArrayStreamingParserDelegate {
-      override def arrayEnded {
+      override def arrayEnded: Unit = {
         result = stack.head
         stack = stack.tail
       }
 
-      override def elementFound(element: String) {
+      override def elementFound(element: String): Unit = {
         val result = if ( decoder.supportsStringDecoding ) {
           decoder.decode(element)
         } else {
@@ -50,11 +50,11 @@ class ArrayDecoder(private val decoder: ColumnDecoder) extends ColumnDecoder {
         current += result
       }
 
-      override def nullElementFound {
+      override def nullElementFound: Unit = {
         current += null
       }
 
-      override def arrayStarted {
+      override def arrayStarted: Unit = {
         current = new ArrayBuffer[Any]()
 
         stack.headOption match {

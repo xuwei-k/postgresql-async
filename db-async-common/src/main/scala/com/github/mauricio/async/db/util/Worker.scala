@@ -34,9 +34,9 @@ class Worker( val executionContext : ExecutionContextExecutorService ) {
 
   import Worker.log
 
-  def action(f: => Unit) {
+  def action(f: => Unit): Unit = {
     this.executionContext.execute(new Runnable {
-      def run() {
+      def run(): Unit = {
         try {
           f
         } catch {
@@ -48,7 +48,7 @@ class Worker( val executionContext : ExecutionContextExecutorService ) {
     })
   }
 
-  def shutdown {
+  def shutdown: Unit = {
     this.executionContext.shutdown()
   }
 

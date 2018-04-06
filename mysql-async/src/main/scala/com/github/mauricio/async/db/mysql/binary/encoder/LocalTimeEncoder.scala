@@ -21,7 +21,7 @@ import org.joda.time.LocalTime
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object LocalTimeEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val time = value.asInstanceOf[LocalTime]
 
     val hasMillis = time.getMillisOfSecond != 0

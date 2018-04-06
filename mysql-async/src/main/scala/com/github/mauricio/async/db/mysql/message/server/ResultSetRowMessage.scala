@@ -31,7 +31,7 @@ class ResultSetRowMessage
 
   def apply(idx: Int): ByteBuf = buffer(idx)
 
-  def update(n: Int, newelem: ByteBuf) {
+  def update(n: Int, newelem: ByteBuf): Unit = {
     buffer.update(n, newelem)
   }
 
@@ -40,7 +40,7 @@ class ResultSetRowMessage
     this
   }
 
-  def clear() {
+  def clear(): Unit = {
     this.buffer.clear()
   }
 
@@ -49,7 +49,7 @@ class ResultSetRowMessage
     this
   }
 
-  def insertAll(n: Int, elems: Traversable[ByteBuf]) {
+  def insertAll(n: Int, elems: Traversable[ByteBuf]): Unit = {
     this.buffer.insertAll(n, elems)
   }
 

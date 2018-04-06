@@ -22,7 +22,7 @@ object PrintUtils {
 
   private val log = Log.getByName(this.getClass.getName)
 
-  def printArray( name : String, buffer : ByteBuf ) {
+  def printArray( name : String, buffer : ByteBuf ): Unit = {
     buffer.markReaderIndex()
     val bytes = new Array[Byte](buffer.readableBytes())
     buffer.readBytes(bytes)

@@ -56,7 +56,7 @@ class PostgreSQLConnectionFactory(
     connection
   }
 
-  def destroy(item: PostgreSQLConnection) {
+  def destroy(item: PostgreSQLConnection): Unit = {
     item.disconnect
   }
 

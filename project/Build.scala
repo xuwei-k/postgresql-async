@@ -80,6 +80,7 @@ object Configuration {
       Opts.compile.encoding("UTF8")
         :+ Opts.compile.deprecation
         :+ Opts.compile.unchecked
+        :+ "-Xfuture"
         :+ "-feature"
     ,
     testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential"),

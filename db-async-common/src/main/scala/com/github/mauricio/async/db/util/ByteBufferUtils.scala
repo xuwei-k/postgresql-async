@@ -22,7 +22,7 @@ import io.netty.buffer.{Unpooled, ByteBuf}
 
 object ByteBufferUtils {
 
-  def writeLength(buffer: ByteBuf) {
+  def writeLength(buffer: ByteBuf): Unit = {
 
     val length = buffer.writerIndex() - 1
     buffer.markWriterIndex()
@@ -38,7 +38,7 @@ object ByteBufferUtils {
     b.writeByte(0)
   }
 
-  def writeSizedString( content : String, b : ByteBuf, charset : Charset ) {
+  def writeSizedString( content : String, b : ByteBuf, charset : Charset ): Unit = {
     val bytes = content.getBytes(charset)
     b.writeByte(bytes.length)
     b.writeBytes(bytes)
@@ -98,13 +98,13 @@ object ByteBufferUtils {
     (b.readByte() & 0xff) | ((b.readByte() & 0xff) << 8) | ((b.readByte() & 0xff) << 16)
   }
 
-  def write3BytesInt( b : ByteBuf, value : Int ) {
+  def write3BytesInt( b : ByteBuf, value : Int ): Unit = {
     b.writeByte( value & 0xff )
     b.writeByte( value >>> 8 )
     b.writeByte( value >>> 16 )
   }
 
-  def writePacketLength(buffer: ByteBuf, sequence : Int = 1) {
+  def writePacketLength(buffer: ByteBuf, sequence : Int = 1): Unit = {
     val length = buffer.writerIndex() - 4
     buffer.markWriterIndex()
     buffer.writerIndex(0)
